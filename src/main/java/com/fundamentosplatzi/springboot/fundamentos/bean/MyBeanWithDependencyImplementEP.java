@@ -1,8 +1,11 @@
 package com.fundamentosplatzi.springboot.fundamentos.bean;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class MyBeanWithDependencyImplementEP implements MyBeanWithDependencyEP{
+    private final Log logger = LogFactory.getLog(MyBeanWithDependencyImplementEP.class);
     private MyOperationEP myOperationEP;
 
     @Autowired
@@ -13,6 +16,6 @@ public class MyBeanWithDependencyImplementEP implements MyBeanWithDependencyEP{
     @Override
     public void printWithDependency() {
         int resultado = myOperationEP.suma(5,4);
-        System.out.println("Procesa desde MyBeanWithDependencyImplementEP, suma = "+resultado);
+        logger.info("Procesa desde MyBeanWithDependencyImplementEP, suma = "+resultado);
     }
 }
