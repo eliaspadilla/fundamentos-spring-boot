@@ -1,5 +1,6 @@
 package com.fundamentosplatzi.springboot.fundamentos;
 
+import com.fundamentosplatzi.springboot.fundamentos.bean.MyBeanEP;
 import com.fundamentosplatzi.springboot.fundamentos.component.ComponentDependencyEP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,10 +12,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class FundamentosApplication implements CommandLineRunner {
 
 	private ComponentDependencyEP componentDependencyEP;
+	private MyBeanEP myBean;
 
 	@Autowired
-	public FundamentosApplication(@Qualifier("componentImplement2EP") ComponentDependencyEP componentDependencyEP){
+	public FundamentosApplication(@Qualifier("componentImplement2EP") ComponentDependencyEP componentDependencyEP,
+									MyBeanEP myBean){
 		this.componentDependencyEP = componentDependencyEP;
+		this.myBean = myBean;
 	}
 
 	public static void main(String[] args) {
@@ -24,5 +28,6 @@ public class FundamentosApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) {
 		componentDependencyEP.procesarDato();
+		myBean.procesarNuevoDato();
 	}
 }
