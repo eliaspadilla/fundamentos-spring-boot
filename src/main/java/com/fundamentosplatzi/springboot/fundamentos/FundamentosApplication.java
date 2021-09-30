@@ -8,6 +8,7 @@ import com.fundamentosplatzi.springboot.fundamentos.dto.UserDto;
 import com.fundamentosplatzi.springboot.fundamentos.entity.User;
 import com.fundamentosplatzi.springboot.fundamentos.pojo.UserPojo;
 import com.fundamentosplatzi.springboot.fundamentos.repository.UserRepository;
+import com.fundamentosplatzi.springboot.fundamentos.service.UserService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tomcat.jni.Local;
@@ -36,6 +37,7 @@ public class FundamentosApplication implements CommandLineRunner {
 	private MyBeanWithProperties myBeanWithProperties;
 	private UserPojo userPojo;
 	private UserRepository userRepository;
+	private UserService userService;
 
 	@Autowired
 	public FundamentosApplication(@Qualifier("componentImplement2EP") ComponentDependencyEP componentDependencyEP,
@@ -43,13 +45,15 @@ public class FundamentosApplication implements CommandLineRunner {
 								  MyBeanWithDependencyEP myBeanWithDependencyEP,
 								  MyBeanWithProperties myBeanWithProperties,
 								  UserPojo userPojo,
-								  UserRepository userRepository){
+								  UserRepository userRepository,
+								  UserService userService){
 		this.componentDependencyEP = componentDependencyEP;
 		this.myBean = myBean;
 		this.myBeanWithDependencyEP = myBeanWithDependencyEP;
 		this.myBeanWithProperties = myBeanWithProperties;
 		this.userPojo = userPojo;
 		this.userRepository = userRepository;
+		this.userService = userService;
 	}
 
 	public static void main(String[] args) {
@@ -61,6 +65,7 @@ public class FundamentosApplication implements CommandLineRunner {
 		//ejemplosAnteriores();
 		saveUsersInDatabase();
 		getInfoJPQLFromUser();
+		saveWithErrorTransactional();
 	}
 
 	private void saveUsersInDatabase(){
@@ -114,5 +119,20 @@ public class FundamentosApplication implements CommandLineRunner {
 
 		logger.info(userRepository.getAllByBirthDateAndEmail(LocalDate.of(2021,01,05),
 				"juan.carlos@gmail.com").orElseThrow(() -> new RuntimeException("no se encontro el usuario getall")));
+	}
+
+	private void saveWithErrorTransactional(){
+		User test1 = new User("nombre1","nombre1@gmail.com",
+				LocalDate.of(2021,03,20));
+		User test2 = new User("nombre2","nombre2@gmail.com",
+				LocalDate.of(2021,01,05));
+		User test3 = new User("nombre3","nombre3@gmail.com",
+				LocalDate.of(2021,05,14));
+
+		List<User> users = Arrays.asList(test1,test2,test3);
+
+		userService.saveTransactional(users);
+
+		userService.getAllUsers().forEach(user -> logger.info("usuario obtenido = "+user));
 	}
 }
