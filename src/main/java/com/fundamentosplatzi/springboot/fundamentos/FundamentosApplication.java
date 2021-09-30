@@ -126,12 +126,16 @@ public class FundamentosApplication implements CommandLineRunner {
 				LocalDate.of(2021,03,20));
 		User test2 = new User("nombre2","nombre2@gmail.com",
 				LocalDate.of(2021,01,05));
-		User test3 = new User("nombre3","nombre3@gmail.com",
+		User test3 = new User("nombre3","nombre2@gmail.com",
 				LocalDate.of(2021,05,14));
 
 		List<User> users = Arrays.asList(test1,test2,test3);
 
-		userService.saveTransactional(users);
+		try {
+			userService.saveTransactional(users);
+		} catch (Exception e) {
+			logger.error("Error en metodo transaccional - "+e.getMessage());
+		}
 
 		userService.getAllUsers().forEach(user -> logger.info("usuario obtenido = "+user));
 	}
