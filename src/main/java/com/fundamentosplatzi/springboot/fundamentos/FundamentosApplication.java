@@ -4,21 +4,26 @@ import com.fundamentosplatzi.springboot.fundamentos.bean.MyBeanEP;
 import com.fundamentosplatzi.springboot.fundamentos.bean.MyBeanWithDependencyEP;
 import com.fundamentosplatzi.springboot.fundamentos.bean.MyBeanWithProperties;
 import com.fundamentosplatzi.springboot.fundamentos.component.ComponentDependencyEP;
+import com.fundamentosplatzi.springboot.fundamentos.dto.UserDto;
 import com.fundamentosplatzi.springboot.fundamentos.entity.User;
 import com.fundamentosplatzi.springboot.fundamentos.pojo.UserPojo;
 import com.fundamentosplatzi.springboot.fundamentos.repository.UserRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootApplication
 public class FundamentosApplication implements CommandLineRunner {
@@ -59,9 +64,9 @@ public class FundamentosApplication implements CommandLineRunner {
 	}
 
 	private void saveUsersInDatabase(){
-		User user1 = new User("Pepito Perez","pepito.perez@gmail.com",
+		User user1 = new User("Pepito Derez","pepito.perez@gmail.com",
 				LocalDate.of(2021,03,20));
-		User user2 = new User("Juan Carlos","juan.carlos@gmail.com",
+		User user2 = new User("John Carlos","juan.carlos@gmail.com",
 				LocalDate.of(2021,01,05));
 		User user3 = new User("John Doe","john.doe@gmail.com",
 				LocalDate.of(2021,05,14));
@@ -81,11 +86,33 @@ public class FundamentosApplication implements CommandLineRunner {
 	}
 
 	private void getInfoJPQLFromUser(){
-		logger.info("Consulta objeto = "+
+		/*logger.info("Consulta objeto = "+
 				userRepository.findByUserEmail("juan.carlos@gmail.com")
 						.orElseThrow(()-> new RuntimeException("No se encontro el usuario")));
 
 		userRepository.findAndSort("J", Sort.by("id").ascending())
 				.forEach(user -> logger.info("metodo sort "+user));
+
+		userRepository.findByName("John Doe").forEach(user -> logger.info("user querymethods = "+user));
+
+		logger.info("usuario querymethods email an name ="+userRepository.
+				findByEmailAndName("juan.carlos@gmail.com","John Carlos")
+				.orElseThrow(() -> new RuntimeException("No se encontro el usuario buscado")));
+
+		userRepository.findByNameLike("%J%").forEach(user -> logger.info("usuario like = "+user));
+
+		userRepository.findByNameOrEmail("John Doe",null).
+				forEach(user -> logger.info("user Or ="+user));*/
+
+		userRepository.findByBirthDateBetween(LocalDate.of(2021,01,01),
+				LocalDate.of(2021,04,29))
+				.forEach(user -> logger.info("usuario por fecha = "+user));
+
+		userRepository.findByNameLikeOrderByIdDesc("%John%").forEach(user -> logger.info("Usuario order 1= "+user));
+
+		userRepository.findByNameContainingOrderByIdDesc("John").forEach(user -> logger.info("Usuario order 2= "+user));
+
+		logger.info(userRepository.getAllByBirthDateAndEmail(LocalDate.of(2021,01,05),
+				"juan.carlos@gmail.com").orElseThrow(() -> new RuntimeException("no se encontro el usuario getall")));
 	}
 }
